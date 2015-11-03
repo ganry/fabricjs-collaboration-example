@@ -30,8 +30,7 @@ var io = require('socket.io').listen(server);
 //Template Engine, handlebars
 app.engine('.hbs', exphbs({
     extname: '.hbs',
-    layoutsDir: "views/",
-    defaultLayout: 'layout'
+    layoutsDir: "views/"
 }));
 app.set('view engine', '.hbs');
 app.set('views', __dirname + '/views');

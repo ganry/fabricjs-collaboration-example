@@ -156,12 +156,11 @@ angular.module('myApp.controllers', [])
      * @TODO: Check Boundary rect of object not object rect itself
      */
     homeCtrl.emitObjectModifying = function(event) {
-        
-        homeCtrl.isModifying = true;
-        
+
         var activeObject = event.target,
             reachedLimit = false;
         
+
         if (activeObject.left < activeObject.width/2) {
             reachedLimit = true;
             activeObject.left = activeObject.width/2;
@@ -184,17 +183,23 @@ angular.module('myApp.controllers', [])
             activeObject.setCoords();
             $scope.canvas.renderAll();
         }
-
         
-        socketFactory.emit('object:modifying', {
-            id: activeObject.id,
-            left: activeObject.left,
-            top: activeObject.top,
-            scaleX: activeObject.scaleX,
-            scaleY: activeObject.scaleY,
-            angle: activeObject.angle,
-            username: commonData.Name
-        });
+        if (typeof homeCtrl.currentMoveTimeout !== 'undefined')
+            clearTimeout(homeCtrl.currentMoveTimeout);
+
+        homeCtrl.currentMoveTimeout = setTimeout(function() {
+
+            socketFactory.emit('object:modifying', {
+                id: activeObject.id,
+                left: activeObject.left,
+                top: activeObject.top,
+                scaleX: activeObject.scaleX,
+                scaleY: activeObject.scaleY,
+                angle: activeObject.angle,
+                username: commonData.Name
+            });
+        }, 25);
+
         
     };
     
@@ -208,28 +213,42 @@ angular.module('myApp.controllers', [])
         var obj = homeCtrl.getObjectById(value.id);
         
         if (typeof obj !== 'undefined') {
-            obj.left = value.left;
-            obj.top = value.top;
-            obj.scaleX = value.scaleX;
-            obj.scaleY = value.scaleY;
-            obj.angle = value.angle;
+            
+            obj.animate({
+                left: value.left,
+                top: value.top,
+                scaleX: value.scaleX,
+                scaleY: value.scaleY,
+                angle: value.angle
+            }, {
+                duration: 500,
+                onChange: function () {
+                    obj.setCoords();
+                    $scope.canvas.renderAll();
 
-            obj.setCoords();
-            $scope.canvas.renderAll();
-            
-            
-            if ($('#editorBubble'+value.username).length == 0) {
-                $('#mainView').append('<div class="editorBubble" id="editorBubble'+value.username+'"></div>');
-            }
-            
-            var editorBubble = $('#editorBubble'+value.username);
+                    if ($('#editorBubble'+value.username).length == 0) {
+                        $('#mainView').append('<div class="editorBubble" id="editorBubble'+value.username+'"></div>');
+                    }
 
-            editorBubble.text(value.username);
-            editorBubble.css('left', $('#fabricjs').offset().left+obj.left-editorBubble.outerWidth() / 2);
-            editorBubble.css('top', $('#fabricjs').offset().top+obj.top-obj.height/2-editorBubble.outerHeight());
-            
-            if (editorBubble.css('display') == 'none')
-                editorBubble.fadeIn(400);
+                    var editorBubble = $('#editorBubble'+value.username);
+
+                    editorBubble.text(value.username);
+                    editorBubble.css('left', $('#fabricjs').offset().left+obj.left-editorBubble.outerWidth() / 2);
+                    editorBubble.css('top', $('#fabricjs').offset().top+obj.top-obj.height/2-editorBubble.outerHeight());
+
+                    if (editorBubble.css('display') == 'none')
+                        editorBubble.fadeIn(400);
+
+                },
+                onComplete: function () {
+                    if ($('#editorBubble'+value.username).length > 0) {
+                        $('#editorBubble'+value.username).fadeOut(400, function() {
+                            $(this).remove();
+                        });
+                    }
+                }
+            });
+
         }
 
     };
@@ -239,13 +258,11 @@ angular.module('myApp.controllers', [])
      */
     homeCtrl.onObjectStoppedModifying = function(value) {
         
-        homeCtrl.isModifying = false;
-            
-        if ($('#editorBubble'+value.username).length > 0) {
-            $('#editorBubble'+value.username).fadeOut(400, function() {
-                $(this).remove();
-            });
+        if (typeof homeCtrl.currentMoveTimeout !== 'undefined') {
+            clearTimeout(homeCtrl.currentMoveTimeout);
+            homeCtrl.currentMoveTimeout = undefined;
         }
+
         
     };
 
