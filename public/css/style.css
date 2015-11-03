@@ -1,0 +1,43 @@
+body {
+    font-family: 'Raleway', sans-serif;
+    color: #666;
+}
+
+/* ng-cloak */
+[ng\:cloak],
+[ng-cloak],
+[data-ng-cloak],
+[x-ng-cloak],
+.ng-cloak,
+.x-ng-cloak {
+    display: none !important;
+}
+
+.splash {
+    height: 25em;
+    padding-top: 7em;
+    margin-bottom: 2em;
+    background-color: #ecf0f1;
+    color: #666;
+    text-align: center;
+}
+
+#fabricjs {
+    border: 1px dotted #bdc3c7;
+}
+
+.btn-primary {
+    background-image: none;
+    border: none;
+}
+
+.editorBubble {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+    border-radius: 4px;
+    background-color: #d35400;
+    color: #FAFAFA;
+    padding: 10px;
+}

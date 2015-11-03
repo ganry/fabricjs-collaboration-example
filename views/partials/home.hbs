@@ -1,0 +1,14 @@
+<div class="container" ng-cloak>
+    <div class="row">
+        <div class="col-md-3">
+            <h3>User</h3>
+            <div ng-repeat="user in users">
+                \{{user.name}}
+            </div>
+        </div>
+        
+        <div class="col-md-9" id="canvas-container">
+            <canvas id="fabricjs" width="500" height="500"></canvas>
+        </div>
+    </div>
+</div>

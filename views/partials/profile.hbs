@@ -1,0 +1,13 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-3">
+            <form ng-submit="submitName();">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" ng-model="user.name" placeholder="Username">
+                </div>
+                <button type="submit" ng-disabled="!user.name" class="btn btn-primary btn-lg">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
