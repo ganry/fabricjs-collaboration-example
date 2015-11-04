@@ -44,7 +44,7 @@ module.exports = function (io) {
 
 
         socket.on('object:modifying', function (value) {
-
+            
             //send object:modifying to everyone except the sender
             socket.broadcast.emit('object:modifying', value);
 

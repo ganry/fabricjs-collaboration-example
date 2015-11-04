@@ -14,6 +14,13 @@ body {
     display: none !important;
 }
 
+.btn-primary {
+    background-image: none;
+    border: none;
+    box-shadow: none;
+}
+
+
 .splash {
     height: 25em;
     padding-top: 7em;
@@ -22,6 +29,21 @@ body {
     color: #FAFAFA;
     text-align: center;
     font-family: 'Oxygen', sans-serif;
+}
+
+.splash .btn-primary {
+    background-color: rgba(150, 200, 255, .3);
+    box-shadow: none;
+}
+
+.splash .btn-primary:focus, 
+.splash .btn-primary:hover {
+    background-color: rgba(150, 200, 255, .2);
+}
+
+
+.splash p {
+    margin-top: 15px;
 }
 
 .splash h1 {
@@ -36,11 +58,6 @@ body {
 
 #fabricjs {
     border: 1px dotted #bdc3c7;
-}
-
-.btn-primary {
-    background-image: none;
-    border: none;
 }
 
 .editorBubble {
@@ -67,4 +84,21 @@ body {
 
 .navbar-default .navbar-brand:focus, .navbar-default .navbar-brand:hover {
     color: #E1E1E1;
+}
+
+.navbar-default .navbar-toggle {
+    border-color: #2c3e50;
+}
+
+.navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover {
+    border-color: #2c3e50;
+    background-color: #2c3e50;
+}
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    border-color: #2c3e50;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #FAFAFA;
 }

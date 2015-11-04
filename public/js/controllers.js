@@ -15,8 +15,10 @@ angular.module('myApp.controllers', [])
     
     var homeCtrl = this;
     
-    if (commonData.Name === '')
+    if (commonData.Name === '') {
         $location.path('/');
+        return;
+    }
     else
         socketFactory.emit('setUser', commonData.Name);
     
@@ -34,16 +36,23 @@ angular.module('myApp.controllers', [])
     }
     
     /**
-     * Simple canvas resize
+     * Resize Canvas
      *
-     * @TODO: Resize all FabricJs objects
+     * @TODO: Replace static optimal width with constant
      */
     homeCtrl.resizeCanvas = function (){ 
         
+        var minWidth = 480;
+        var containerWidth = $(homeCtrl.container).width() > minWidth ? $(homeCtrl.container).width() : minWidth;
+        var scaleFactor = containerWidth / 847;
+
         $scope.canvas.setDimensions({
-            width: $(homeCtrl.container).width(),
-            height: $(homeCtrl.container).height()
+            width: containerWidth
         });
+
+        $scope.canvas.setZoom(scaleFactor);
+        $scope.canvas.calcOffset();
+        $scope.canvas.renderAll();
 
     }
     
@@ -56,6 +65,7 @@ angular.module('myApp.controllers', [])
 
         // create a wrapper around native canvas element (with id="fabricjs")
         $scope.canvas = new fabric.Canvas('fabricjs');
+        $scope.canvas.selection = false;
         homeCtrl.container = $('#canvas-container');
 
         //Register resize event
@@ -63,6 +73,8 @@ angular.module('myApp.controllers', [])
 
         //Resize canvas on first load
         homeCtrl.resizeCanvas();
+        
+
         
         //init objList
         $scope.objList = [
@@ -97,6 +109,15 @@ angular.module('myApp.controllers', [])
                 originY: 'center',
                 id: '003'
             }),
+            new fabric.Text('Everything Responsive', {
+                left: 300, 
+                top: 300,
+                fill: '#f39c12',
+                fontFamily: 'Oxygen',
+                originX: 'center',
+                originY: 'center',
+                id: '005'
+            })
         ];
         
         //add all objects to the canvas
@@ -117,7 +138,9 @@ angular.module('myApp.controllers', [])
             $scope.objList.push(oImg)
             $scope.canvas.add(oImg);
         });
-
+        
+        
+        
         //register canvas events
         $scope.canvas.on('object:moving', this.emitObjectModifying);
         $scope.canvas.on('object:scaling', this.emitObjectModifying);
@@ -152,31 +175,38 @@ angular.module('myApp.controllers', [])
     /**
      * Current Client is modifying object
      *
-     * @TODO: Move boundary check to own function
-     * @TODO: Check Boundary rect of object not object rect itself
+     * @TODO: Move boundary check to seperate function
      */
     homeCtrl.emitObjectModifying = function(event) {
-
+        
+        homeCtrl.isModifying = true;
+        
         var activeObject = event.target,
-            reachedLimit = false;
-        
+            reachedLimit = false,
+            
+            objectLeft = activeObject.left,
+            objectTop = activeObject.top,
+            objectWidth = (activeObject.width * activeObject.scaleX) / 2 ,
+            objectHeight = (activeObject.height * activeObject.scaleY) / 2,
+            canvasWidth = $scope.canvas.width/$scope.canvas.getZoom(),
+            canvasHeight = $scope.canvas.height/$scope.canvas.getZoom();
 
-        if (activeObject.left < activeObject.width/2) {
+        if (objectLeft < objectWidth) {
             reachedLimit = true;
-            activeObject.left = activeObject.width/2;
+            activeObject.left = objectWidth;
         }
-        if (activeObject.left+activeObject.width/2 > $scope.canvas.width) {
+        if (objectLeft+objectWidth > canvasWidth) {
             reachedLimit = true;
-            activeObject.left = $scope.canvas.width-activeObject.width/2;
+            activeObject.left = canvasWidth-objectWidth;
         }
         
-        if (activeObject.top < activeObject.height/2) {
+        if (objectTop < objectHeight) {
             reachedLimit = true;
-            activeObject.top = activeObject.height/2;
+            activeObject.top = objectHeight;
         }
-        if (activeObject.top+activeObject.height/2 > $scope.canvas.height) {
+        if (objectTop+objectHeight > canvasHeight) {
             reachedLimit = true;
-            activeObject.top = $scope.canvas.height-activeObject.height/2;
+            activeObject.top = canvasHeight-objectHeight;
         }
         
         if (reachedLimit) {
@@ -188,7 +218,7 @@ angular.module('myApp.controllers', [])
             clearTimeout(homeCtrl.currentMoveTimeout);
 
         homeCtrl.currentMoveTimeout = setTimeout(function() {
-
+            
             socketFactory.emit('object:modifying', {
                 id: activeObject.id,
                 left: activeObject.left,
@@ -211,6 +241,10 @@ angular.module('myApp.controllers', [])
     homeCtrl.onObjectModifying = function(value) {
         
         var obj = homeCtrl.getObjectById(value.id);
+        var editorBubble = $('#editorBubble'+value.username);
+
+        if (editorBubble.css('display') == 'none')
+            editorBubble.fadeIn(400);
         
         if (typeof obj !== 'undefined') {
             
@@ -230,22 +264,18 @@ angular.module('myApp.controllers', [])
                         $('#mainView').append('<div class="editorBubble" id="editorBubble'+value.username+'"></div>');
                     }
 
-                    var editorBubble = $('#editorBubble'+value.username);
+                    var editorBubble = $('#editorBubble'+value.username),
+                        objectLeft = obj.left * $scope.canvas.getZoom(),
+                        objectTop = obj.top * $scope.canvas.getZoom(),
+                        objectHeight = (obj.height * obj.scaleY * $scope.canvas.getZoom()) / 2;
+
 
                     editorBubble.text(value.username);
-                    editorBubble.css('left', $('#fabricjs').offset().left+obj.left-editorBubble.outerWidth() / 2);
-                    editorBubble.css('top', $('#fabricjs').offset().top+obj.top-obj.height/2-editorBubble.outerHeight());
-
-                    if (editorBubble.css('display') == 'none')
-                        editorBubble.fadeIn(400);
-
+                    editorBubble.css('left', $('#fabricjs').offset().left+objectLeft-editorBubble.outerWidth() / 2);
+                    editorBubble.css('top', $('#fabricjs').offset().top+objectTop-objectHeight-editorBubble.outerHeight());
                 },
                 onComplete: function () {
-                    if ($('#editorBubble'+value.username).length > 0) {
-                        $('#editorBubble'+value.username).fadeOut(400, function() {
-                            $(this).remove();
-                        });
-                    }
+                    
                 }
             });
 
@@ -258,9 +288,18 @@ angular.module('myApp.controllers', [])
      */
     homeCtrl.onObjectStoppedModifying = function(value) {
         
+        homeCtrl.isModifying = false;
+        
         if (typeof homeCtrl.currentMoveTimeout !== 'undefined') {
             clearTimeout(homeCtrl.currentMoveTimeout);
             homeCtrl.currentMoveTimeout = undefined;
+        }
+        
+        
+        if ($('#editorBubble'+value.username).length > 0) {
+            $('#editorBubble'+value.username).fadeOut(400, function() {
+                $(this).remove();
+            });
         }
 
         
