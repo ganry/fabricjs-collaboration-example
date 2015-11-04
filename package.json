@@ -1,7 +1,13 @@
 {
-  "name": "angularjs-realtime-canvas",
-  "description": "AngularJs Realtime Canvas",
+  "name": "fabricjs-collaboration-example",
+  "description": "AngularJs Realtime Canvas with FabricJS and Socket.io",
   "version": "0.0.0",
+  "author": "Henry Keller <henry@inapp.eu>",
+  "homepage": "http://www.henrykeller.eu",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nyozz/fabricjs-collaboration-example"
+  },
   "dependencies": {
     "body-parser": "^1.14.1",
     "errorhandler": "^1.4.2",
