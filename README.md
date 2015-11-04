@@ -1,7 +1,7 @@
 # FabricJS Collaboration Example
 
 This is a proof-of-concept app I wrote using AngularJS + FabricJS + Socket.io + Express to test out collaboration possibilities with FabricJS.
-It is a very Basic App with a limited features but is a good starting point for your own awesome Apps.
+It is a very Basic App with a limited feature set but is a good starting point for your own awesome Apps.
 
 This Example shows you how to create a real time canvas, display the current User editing objects on it and techniques for some performance issues. Instead of sending position updates on every change I chose a more performance friendly method.
 
