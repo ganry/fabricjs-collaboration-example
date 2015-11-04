@@ -4,11 +4,11 @@
  * App
  */
 
-angular.module('myApp', [
+angular.module('fabricApp', [
     'ngRoute',
     
-    'myApp.controllers',
-    'myApp.services'
+    'fabricApp.controllers',
+    'fabricApp.services'
 ])
 .config(function ($routeProvider, $locationProvider) {
     $routeProvider
@@ -25,4 +25,7 @@ angular.module('myApp', [
     });
         
     $locationProvider.html5Mode(true);
+})
+.run(function() {
+    $('#loader-wrapper').fadeOut(1000);
 });

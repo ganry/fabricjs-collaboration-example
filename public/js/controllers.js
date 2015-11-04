@@ -4,7 +4,7 @@
  * Controllers
  */
 
-angular.module('myApp.controllers', [])
+angular.module('fabricApp.controllers', [])
 
 /**
  * Main FabricJs Controller
@@ -138,9 +138,7 @@ angular.module('myApp.controllers', [])
             $scope.objList.push(oImg)
             $scope.canvas.add(oImg);
         });
-        
-        
-        
+
         //register canvas events
         $scope.canvas.on('object:moving', this.emitObjectModifying);
         $scope.canvas.on('object:scaling', this.emitObjectModifying);
@@ -156,7 +154,7 @@ angular.module('myApp.controllers', [])
     
     homeCtrl.setUsers = function(value) {
         $scope.users = value;
-    }
+    };
     
     /**
      * Tell all clients we stopped modifying

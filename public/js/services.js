@@ -4,7 +4,7 @@
  * Services
  */
 
-angular.module('myApp.services', [])
+angular.module('fabricApp.services', [])
 .factory('socketFactory', function ($rootScope) {
     
     var socket = io.connect();
