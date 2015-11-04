@@ -12,6 +12,8 @@
     <link rel="shortcut icon" href="">
     <link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -56,6 +58,23 @@
 
 
     <div ng-view id="mainView"></div>
+
+    <footer class="main-footer ng-scope">
+        <div class="inner-container clearfix">
+            <div>
+                <h3>Made with <i class="fa fa-heart"></i> at InApp.</h3>
+            </div>
+            <nav class="footer-block">
+                <a href="http://www.inapp.eu/articles" target="_blank">Development Blog</a>
+                <a href="mailto:henry@inapp.eu">Contact</a>
+            </nav>
+            <nav class="footer-block">
+                <a class="social tw" href="http://twitter.com/gamodogames" target="_blank"> <i class="fa fa-twitter"></i> </a>
+                <a class="social fb" href="http://facebook.com/gamodo.eu" target="_blank"> <i class="fa fa-facebook"></i> </a>
+                <a href="http://www.henrykeller.eu" target="_blank">Copyright © 2015 Henry Keller.</a>
+            </nav>
+        </div>
+    </footer>
 
     <script src="bower_components/socket.io-client/socket.io.js"></script>
     <script src="bower_components/fabric.js/dist/fabric.min.js"></script>
