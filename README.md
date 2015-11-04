@@ -3,7 +3,7 @@
 This is a proof-of-concept app I wrote using AngularJS + FabricJS + Socket.io + Express to test out collaboration possibilities with FabricJS.
 It is a very Basic App with a limited feature set but is a good starting point for your own awesome Apps.
 
-This Example shows you how to create a real time canvas, display the current User editing objects on it and techniques for some performance issues. Instead of sending position updates on every change I chose a more performance friendly method.
+This Example shows you how to create a real time canvas, display the current User editing objects on it, keeping every object between boundaries even while scaling and techniques for some performance issues. Instead of sending position updates on every change I chose a more performance friendly method.
 
 I also implemented some Responsive features, so this Example should run fine on mobile devices. I made the FabricJS canvas completely responsive. As said before, this is just proof-of-concept so a lot of features are missing and some parts could be not best practice.
 
