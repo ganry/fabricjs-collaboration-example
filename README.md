@@ -36,7 +36,7 @@ node app.js
 ## Contact
 
 For more information on AngularJS please check out http://angularjs.org/
-For more on FabricJS and Socket.io, http://fabricjs.com/ and http://http://socket.io/ are
+For more on FabricJS and Socket.io, http://fabricjs.com/ and http://socket.io/ are
 your friends.
 
 If you want more example Apps regarding AngularJS and lots of other stuff you can visit my homepage:
