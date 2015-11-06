@@ -5,7 +5,7 @@ It is a very Basic App with a limited feature set but is a good starting point f
 
 This Example shows you how to create a real time canvas, display the current User editing objects on it, keeping every object between boundaries even while scaling and techniques for some performance issues. Instead of sending position updates on every change I chose a more performance friendly method.
 
-I also implemented some Responsive features, so this Example should run fine on mobile devices. I made the FabricJS canvas completely responsive. As said before, this is just proof-of-concept so a lot of features are missing and some parts could be not best practice.
+I also implemented some Responsive features, so this Example should run fine on mobile devices. I made the FabricJS canvas completely responsive. As said before, this is just proof-of-concept so a lot of features are missing and some parts may not be best practice.
 
 ![alt text](screenshots/main_screen.jpg "Main Screen")
 
