@@ -21,6 +21,10 @@ angular.module('fabricApp.controllers', [])
     }
     else
         socketFactory.emit('setUser', commonData.Name);
+
+    homeCtrl.getEditorBubble = function(username) {
+        return $('div[data-user-id="'+username+'"]');
+    };
     
     
     /**
@@ -135,7 +139,7 @@ angular.module('fabricApp.controllers', [])
             oImg.left = 460;
             oImg.top = 120;
             
-            $scope.objList.push(oImg)
+            $scope.objList.push(oImg);
             $scope.canvas.add(oImg);
         });
 
@@ -162,7 +166,7 @@ angular.module('fabricApp.controllers', [])
      * @TODO: Working with username is bad, replace with id
      */
     homeCtrl.emitObjectStoppedModifying = function(event) {
-        
+
         if (homeCtrl.isModifying) {
             socketFactory.emit('object:stoppedModifying', {
                 username: commonData.Name
@@ -239,7 +243,11 @@ angular.module('fabricApp.controllers', [])
     homeCtrl.onObjectModifying = function(value) {
         
         var obj = homeCtrl.getObjectById(value.id);
-        var editorBubble = $('#editorBubble'+value.username);
+        var editorBubble = homeCtrl.getEditorBubble(value.username);
+
+        if (homeCtrl.getEditorBubble(value.username).length == 0) {
+            $('#mainView').append('<div class="editorBubble" data-user-id="'+value.username+'"><i class="fa fa-user"></i><span class="username"></span></div>');
+        }
 
         if (editorBubble.css('display') == 'none')
             editorBubble.fadeIn(400);
@@ -258,17 +266,11 @@ angular.module('fabricApp.controllers', [])
                     obj.setCoords();
                     $scope.canvas.renderAll();
 
-                    if ($('#editorBubble'+value.username).length == 0) {
-                        $('#mainView').append('<div class="editorBubble" id="editorBubble'+value.username+'"></div>');
-                    }
-
-                    var editorBubble = $('#editorBubble'+value.username),
-                        objectLeft = obj.left * $scope.canvas.getZoom(),
+                    var objectLeft = obj.left * $scope.canvas.getZoom(),
                         objectTop = obj.top * $scope.canvas.getZoom(),
                         objectHeight = (obj.height * obj.scaleY * $scope.canvas.getZoom()) / 2;
 
-
-                    editorBubble.text(value.username);
+                    editorBubble.find('span[class=username]').text(value.username);
                     editorBubble.css('left', $('#fabricjs').offset().left+objectLeft-editorBubble.outerWidth() / 2);
                     editorBubble.css('top', $('#fabricjs').offset().top+objectTop-objectHeight-editorBubble.outerHeight());
                 },
@@ -292,15 +294,13 @@ angular.module('fabricApp.controllers', [])
             clearTimeout(homeCtrl.currentMoveTimeout);
             homeCtrl.currentMoveTimeout = undefined;
         }
-        
-        
-        if ($('#editorBubble'+value.username).length > 0) {
-            $('#editorBubble'+value.username).fadeOut(400, function() {
+
+        if (homeCtrl.getEditorBubble(value.username).length > 0) {
+            homeCtrl.getEditorBubble(value.username).fadeOut(400, function() {
                 $(this).remove();
             });
         }
 
-        
     };
 
     homeCtrl.init();

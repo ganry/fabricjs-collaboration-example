@@ -83,6 +83,11 @@ body {
     padding: 10px;
 }
 
+.editorBubble i {
+    margin-right: 10px;
+    margin-left: 5px;
+}
+
 .navbar-default {
     border: none;
     box-shadow: none;
