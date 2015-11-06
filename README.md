@@ -21,10 +21,6 @@ Clone this repository and run the following shell commands afterwards:
 npm install
 ```
 
-```shell
-bower install
-```
-
 ### Running the app
 
 Run the following shell commands:
