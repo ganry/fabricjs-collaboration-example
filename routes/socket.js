@@ -22,7 +22,7 @@ module.exports = function (io) {
                 return i;
         }
         return -1;
-    }
+    };
 
 
     io.sockets.on('connection', function (socket) {
@@ -57,6 +57,13 @@ module.exports = function (io) {
 
         });
 
+        socket.on('addRectangle', function (value) {
+
+            //send object:stoppedModifying to everyone except the sender
+            socket.broadcast.emit('addRectangle', value);
+
+        });
+
         socket.on('setUser', function (value) {
             
             var user = getUserById(socket.id);
@@ -67,4 +74,4 @@ module.exports = function (io) {
 
         });
     });
-}
+};

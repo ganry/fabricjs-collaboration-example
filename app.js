@@ -15,10 +15,10 @@ var express = require('express'),
     path = require('path');
 
 //custom modules
-var routes = require('./routes'),
-    restApi = require('./routes/restapi');
+var routes = require('./routes');
 
 var app = module.exports = express();
+var restApi = require('./routes/restapi')(app);
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
@@ -65,7 +65,7 @@ app.get('/', routes.index);
 app.get('/partials/:name', routes.partials);
 
 // JSON API
-app.get('/api/name', restApi.name);
+app.get('/api/name', restApi.getObjects);
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);

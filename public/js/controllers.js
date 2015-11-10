@@ -37,7 +37,17 @@ angular.module('fabricApp.controllers', [])
                 return $scope.objList[i];
         }
         
-    }
+    };
+
+    homeCtrl.getHighestId = function() {
+
+        var highestId = 0;
+        for(var i = 0; i < $scope.objList.length; i++) {
+            if ($scope.objList[i].id > highestId)
+                highestId = $scope.objList[i].id;
+        }
+        return highestId;
+    };
     
     /**
      * Resize Canvas
@@ -77,9 +87,7 @@ angular.module('fabricApp.controllers', [])
 
         //Resize canvas on first load
         homeCtrl.resizeCanvas();
-        
 
-        
         //init objList
         $scope.objList = [
             new fabric.Rect({
@@ -90,7 +98,7 @@ angular.module('fabricApp.controllers', [])
                 height: 100,
                 originX: 'center',
                 originY: 'center',
-                id: '001'
+                id: 0
             }),
 
             new fabric.Circle({
@@ -100,7 +108,7 @@ angular.module('fabricApp.controllers', [])
                 radius: 50,
                 originX: 'center',
                 originY: 'center',
-                id: '002'
+                id: 1
             }),
             
             new fabric.Triangle({
@@ -111,7 +119,7 @@ angular.module('fabricApp.controllers', [])
                 height: 100,
                 originX: 'center',
                 originY: 'center',
-                id: '003'
+                id: 2
             }),
             new fabric.Text('Everything Responsive', {
                 left: 300, 
@@ -120,7 +128,7 @@ angular.module('fabricApp.controllers', [])
                 fontFamily: 'Oxygen',
                 originX: 'center',
                 originY: 'center',
-                id: '005'
+                id: 3
             })
         ];
         
@@ -131,7 +139,7 @@ angular.module('fabricApp.controllers', [])
         
         //add image from url
         fabric.Image.fromURL('images/icons/user.png', function(oImg) {
-            oImg.id = '004';
+            oImg.id = 4;
             
             oImg.originX = 'center';
             oImg.originY = 'center';
@@ -143,21 +151,114 @@ angular.module('fabricApp.controllers', [])
             $scope.canvas.add(oImg);
         });
 
+        homeCtrl.initDrag();
+
         //register canvas events
         $scope.canvas.on('object:moving', this.emitObjectModifying);
         $scope.canvas.on('object:scaling', this.emitObjectModifying);
         $scope.canvas.on('object:rotating', this.emitObjectModifying);
         $scope.canvas.on('mouse:up', this.emitObjectStoppedModifying);
-        
+        $scope.canvas.on('mouse:up', this.dragMouseUp);
+
         //register socket events
         socketFactory.on('object:modifying', this.onObjectModifying);
         socketFactory.on('object:stoppedModifying', this.onObjectStoppedModifying);
+        socketFactory.on('addRectangle', this.onAddRectangle);
 
         socketFactory.on('users', this.setUsers);
     };
-    
+
     homeCtrl.setUsers = function(value) {
         $scope.users = value;
+    };
+
+    homeCtrl.initDrag = function() {
+
+        $(window).on('mouseup', function(event) {
+            homeCtrl.dragMouseUp(event);
+        }).on('mousemove', function(event) {
+            homeCtrl.dragMouseMove(event);
+        });
+
+        homeCtrl.addRectangle = $('#addRectangle');
+        homeCtrl.addRectangle.on('mousedown', function(event) {
+            homeCtrl.lockDrag = true;
+            homeCtrl.dragObject = $('<div class="addRectangle"></div>');
+            homeCtrl.dragObject.css('position', 'fixed');
+            homeCtrl.dragObject.css('top', event.clientY);
+            homeCtrl.dragObject.css('left', event.clientX);
+            $('body').append(homeCtrl.dragObject);
+            event.preventDefault();
+        });
+
+    };
+
+    homeCtrl.dragMouseUp = function(event) {
+        homeCtrl.lockDrag = false;
+        if (typeof homeCtrl.dragObject !== 'undefined') {
+            homeCtrl.dragObject.remove();
+            homeCtrl.addNewRectangle(event);
+            homeCtrl.dragObject = undefined;
+        }
+    };
+
+    homeCtrl.dragMouseMove = function(event) {
+        if (homeCtrl.lockDrag && homeCtrl.dragObject != undefined) {
+            event.preventDefault();
+            console.log('moving');
+            homeCtrl.dragObject.css('top', event.clientY - homeCtrl.dragObject.outerHeight());
+            homeCtrl.dragObject.css('left', event.clientX - homeCtrl.dragObject.outerWidth());
+        }
+    };
+
+    homeCtrl.addNewRectangle = function(event) {
+
+        var left, top, id;
+
+        left = ((event.clientX - $(homeCtrl.container).offset().left) - 25) / $scope.canvas.getZoom();
+        top = (event.pageY - $(homeCtrl.container).offset().top) / $scope.canvas.getZoom();
+        id = homeCtrl.getHighestId() + 1;
+
+        console.log(left);
+        console.log(top);
+
+        var rectangle = new fabric.Rect({
+            left: left,
+            top: +top,
+            fill: '#2ecc71',
+            width: 50,
+            height: 50,
+            originX: 'center',
+            originY: 'center',
+            id: id
+        });
+
+        socketFactory.emit('addRectangle', {
+            left: left,
+            top: +top,
+            id: id
+        });
+        $scope.objList.push(rectangle);
+        $scope.canvas.add(rectangle);
+        $scope.canvas.renderAll();
+    };
+
+    homeCtrl.onAddRectangle = function(data) {
+
+        var rectangle = new fabric.Rect({
+            left: data.left,
+            top: data.top,
+            fill: '#2ecc71',
+            width: 50,
+            height: 50,
+            originX: 'center',
+            originY: 'center',
+            id: data.id
+        });
+
+        $scope.objList.push(rectangle);
+        $scope.canvas.add(rectangle);
+        $scope.canvas.renderAll();
     };
     
     /**
@@ -171,6 +272,15 @@ angular.module('fabricApp.controllers', [])
             socketFactory.emit('object:stoppedModifying', {
                 username: commonData.Name
             });
+        }
+
+        if (homeCtrl.lockDrag && homeCtrl.dragObject != undefined) {
+            homeCtrl.lockDrag = false;
+            if (typeof homeCtrl.dragObject !== 'undefined') {
+                homeCtrl.dragObject.remove();
+                homeCtrl.addNewRectangle(event);
+                homeCtrl.dragObject = undefined;
+            }
         }
     };
     
