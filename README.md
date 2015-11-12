@@ -11,6 +11,7 @@ I also implemented some Responsive features, so this Example should run fine on 
 
 ## Live Demo
 Live Demo is hosted on Heroku
+
 [Live Demo](https://fabricjs-collaboration.herokuapp.com/)
 
 ## How to use it
