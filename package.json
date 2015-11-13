@@ -1,7 +1,7 @@
 {
   "name": "fabricjs-collaboration-example",
   "description": "AngularJs Realtime Canvas with FabricJS and Socket.io",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": "Henry Keller <henry@inapp.eu>",
   "homepage": "http://www.henrykeller.eu",
   "repository": {
