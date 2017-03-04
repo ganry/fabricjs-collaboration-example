@@ -37,13 +37,13 @@ For more on FabricJS and Socket.io, http://fabricjs.com/ and http://socket.io/ a
 your friends.
 
 If you want more example Apps regarding AngularJS and lots of other stuff you can visit my homepage:
-http://www.henrykeller.eu
+http://www.creativemind.info
 
 ## License
 
     The MIT License (MIT)
 
-    Copyright (c) 2015 Henry Keller <henry@inapp.eu>
+    Copyright (c) 2015 Henry Keller <henry@creativemind.info>
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
